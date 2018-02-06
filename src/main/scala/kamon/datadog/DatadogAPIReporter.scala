@@ -69,15 +69,18 @@ class DatadogAPIReporter extends MetricReporter {
       .setRequestTimeout(config.connectTimeout.toMillis.toInt)
       .build())
 
-    client.preparePost(url)
+    val res = client.preparePost(url)
       .setBody(buildRequestBody(snapshot))
       .setHeader("Content-Type", "application/json")
       .execute()
+      .toCompletableFuture().get()
+
+    println(res)
 
   }
 
   private def buildRequestBody(snapshot: PeriodSnapshot): String = {
-    val timestamp: Long = (snapshot.from.toEpochMilli)
+    val timestamp: Long = snapshot.from.getEpochSecond
     val serviceTag = "\"service:" + Kamon.environment.service + "\""
     val host = Kamon.environment.host
     val seriesBuilder = new StringBuilder()
