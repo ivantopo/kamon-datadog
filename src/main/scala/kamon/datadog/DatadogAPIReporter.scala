@@ -69,13 +69,11 @@ class DatadogAPIReporter extends MetricReporter {
       .setRequestTimeout(config.connectTimeout.toMillis.toInt)
       .build())
 
-    val res = client.preparePost(url)
+    client.preparePost(url)
       .setBody(buildRequestBody(snapshot))
       .setHeader("Content-Type", "application/json")
       .execute()
       .toCompletableFuture().get()
-
-    println(res)
 
   }
 
